@@ -12,12 +12,16 @@ do
     echo -ne "Bearbeite:\t$vorname "
     echo $nachname
 
-    convert $file -gravity South -pointsize 30 -annotate "+0+10" "$vorname $nachname" -flatten "tagged_$file"
+    # draw transparent white rectangle in south position
+    convert $file -strokewidth 0 -fill "rgba( 255, 255, 255, 0.5 )" -draw "rectangle 0,230 300,300 " "rect_$file"
+    # write the name in south position
+    convert "rect_$file" -gravity South -pointsize 30 -annotate "+0+10" "$vorname $nachname" -flatten "tagged_$file"
 
 done
 
 montage tagged_* -tile 4x5 MONTAGE.jpg
 convert MONTAGE.jpg Klassenliste.pdf
 
+rm rect_*
 rm tagged_*
 rm MONTAGE.jpg

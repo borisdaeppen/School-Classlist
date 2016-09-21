@@ -5,11 +5,21 @@
 
 # Aufruf: bash makeclasslist.sh *.jpg
 
+# momentanes Arbeitsverzeichnis merken
+WD=$(pwd)
+
 # über alle Bilder iterieren
-for file in $( ls -1 $@ );
+for input in $( ls -1 $@ );
 do
     # Datei anzeigen welche bearbeitet wird
-    ls $file
+    ls $input
+
+    # Dateiname von Pfad trennen
+    file=$(basename $input)
+    path=$(dirname  $input)
+
+    # Ordner mit Bildern betreten
+    cd "$WD/$path"
 
     # Datei-Endung abschneiden um Dateiname zu extrahieren
     name=$(echo $file | cut -d '.' -f1 )
@@ -30,7 +40,13 @@ do
     # write the name in south position
     convert "rect_$file" -gravity South -pointsize 30 -annotate "+0+2" "$vorname\n$nachname" -flatten "tagged_$file"
 
+    # Ordner mit Bildern verlassen (sonst geht Loop schief)
+    cd $WD
+
 done
+
+# Ordner mit Bilder betreten und aufräumen
+cd "$WD/$path"
 
 montage tagged_* -tile 4x5 MONTAGE.jpg
 convert MONTAGE.jpg Klassenliste.pdf
@@ -39,3 +55,5 @@ rm resized_*
 rm rect_*
 rm tagged_*
 rm MONTAGE.jpg
+
+cd $WD

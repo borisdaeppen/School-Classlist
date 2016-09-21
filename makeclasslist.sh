@@ -22,17 +22,20 @@ do
     echo -ne "Bearbeite:\t$vorname "
     echo $nachname
 
+    convert $file -resize 300x300 "resized_$file"
+
     # draw transparent white rectangle in south position
-    convert $file -strokewidth 0 -fill "rgba( 255, 255, 255, 0.5 )" -draw "rectangle 0,230 300,300 " "rect_$file"
+    convert "resized_$file" -strokewidth 0 -fill "rgba( 255, 255, 255, 0.7 )" -draw "rectangle 0,230 300,300 " "rect_$file"
 
     # write the name in south position
-    convert "rect_$file" -gravity South -pointsize 30 -annotate "+0+10" "$vorname $nachname" -flatten "tagged_$file"
+    convert "rect_$file" -gravity South -pointsize 30 -annotate "+0+2" "$vorname\n$nachname" -flatten "tagged_$file"
 
 done
 
 montage tagged_* -tile 4x5 MONTAGE.jpg
 convert MONTAGE.jpg Klassenliste.pdf
 
+rm resized_*
 rm rect_*
 rm tagged_*
 rm MONTAGE.jpg

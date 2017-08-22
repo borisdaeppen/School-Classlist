@@ -25,17 +25,17 @@ do
     name=$(echo $file | cut -d '.' -f1 )
 
     # Vorname und Nachname extrahieren
-    vorname=$(echo $name | cut -d '_' -f1 )
-    nachname=$(echo $name | cut -d '_' -f2 )
+    vorname=$(echo $name | cut -d  '_' -f2 )
+    nachname=$(echo $name | cut -d '_' -f1 )
 
     # Extrahierte Informationen ausgeben
     echo -ne "Bearbeite:\t$vorname "
     echo $nachname
 
-    convert $file -resize 300x300 "resized_$file"
+    convert $file -auto-orient -resize 600x600 "resized_$file"
 
     # draw transparent white rectangle in south position
-    convert "resized_$file" -strokewidth 0 -fill "rgba( 255, 255, 255, 0.7 )" -draw "rectangle 0,230 300,300 " "rect_$file"
+    convert "resized_$file" -auto-orient -strokewidth 0 -fill "rgba( 255, 255, 255, 0.7 )" -draw "rectangle 0,530 600,600 " "rect_$file"
 
     # write the name in south position
     convert "rect_$file" -gravity South -pointsize 30 -annotate "+0+2" "$vorname\n$nachname" -flatten "tagged_$file"
@@ -48,7 +48,7 @@ done
 # Ordner mit Bilder betreten und aufräumen
 cd "$WD/$path"
 
-montage tagged_* -tile 4x5 MONTAGE.jpg
+montage tagged_* -mode concatenate -tile 4x5 MONTAGE.jpg
 convert MONTAGE.jpg Klassenliste.pdf
 
 rm resized_*
